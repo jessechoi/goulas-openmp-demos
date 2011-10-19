@@ -10,9 +10,9 @@ The tutorial runs on Linux and has been checked on Ubuntu.
 
 We need packages `build-essential` and and `libgomp1`. The first package installs in one step all basic development tools for Ubuntu, like the GCC compiler, GNU make, etc. The `libgomp1` is the GCC OpenMP support library. Install them using:
 
-<pre>
+{{{
 sudo apt-get install build-essential libgomp1
-</pre>
+}}}
 
 = Building =
 
@@ -80,6 +80,94 @@ Hello from OpenMP thread 6
 Hello from OpenMP thread 2
 Hello from OpenMP thread 0
 }}}
+
+= Parallel for =
+
+The Parallel for program is in directory `for`.
+
+The program creates two vectors, `a` and `b`, and initializes them with random data. The size is defined  by the macro SIZE. Then, vectors `c` and `cv` are filled with the sum of vectors `a` and `b`. The code offers two alternatives, one parallel using OpenMP and one serial.
+
+Loops can be executed in parallel using the directive `#pragma omp parallel for`. OpenMP automatically partitions the individual iterations of a loop and assigns them to different threads. Again, we need to assign shared and private variables. Shared variables are accessible from all threads and we must be careful for race conditions. When a variable is private, the original value is copied to each thread and each threads has access to its own copy of the variable.
+
+Let's set the size to 100, build the code and see what happens for various thread numbers.
+
+{{{
+$ export OMP_NUM_THREADS=2
+$ ./for
+
+Parallel for
+
+Size 100
+Serial run time: 0.002304 msec
+Parallel run time: 0.097218 msec
+Comparing results: SUCCESS
+}}}
+
+{{{
+$ export OMP_NUM_THREADS=4
+$ ./for
+
+Parallel for
+
+Size 100
+Serial run time: 0.002305 msec
+Parallel run time: 0.184798 msec
+Comparing results: SUCCESS
+}}}
+
+{{{
+$ export OMP_NUM_THREADS=8
+$ ./for
+
+Parallel for
+
+Size 100
+Serial run time: 0.002375 msec
+Parallel run time: 0.340542 msec
+Comparing results: SUCCESS
+}}}
+
+Oops? What happened?
+
+Let's change the size to 1000000.
+{{{
+$ export OMP_NUM_THREADS=2
+$ ./for
+
+Parallel for
+
+Size 1000000
+Serial run time: 6.796168 msec
+Parallel run time: 3.927334 msec
+Comparing results: SUCCESS
+}}}
+
+{{{
+$ export OMP_NUM_THREADS=4
+$ ./for
+
+Parallel for
+
+Size 1000000
+Serial run time: 6.921321 msec
+Parallel run time: 2.202346 msec
+Comparing results: SUCCESS
+}}}
+{{{
+$ export OMP_NUM_THREADS=8
+$ ./for
+
+Parallel for
+
+Size 1000000
+Serial run time: 6.974470 msec
+Parallel run time: 2.799692 msec
+Comparing results: SUCCESS
+}}}
+
+Ok, this seems better, we see a speedup of 3.3X at 4 threads. Remember that my processor is quad core and it's not exactly idle at the time of the "benchmark", running X and all my usual suspects, Eclipse, 40-50 chrome tabs, 5-10 firefox tabs, thunderbird, ..
+
+So, what happened? Threads creation, iterations partitioning and scheduling introduce overheads. When the task is very small, like adding 100 numbers, these overheads dominate the running time. Don't forget Amdhal.
 
 = References =
 
