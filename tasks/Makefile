@@ -18,16 +18,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with goulas-openmp-demos.  
 #  If not, see <http://www.gnu.org/licenses/>.
-EXAMPLES	:= hello for tasks
+TARGET	:= tasks
+OBJ	:= tasks.o
 
-.PHONY:	all $(EXAMPLES) clean
-
-all:	$(EXAMPLES)
-
-$(EXAMPLES):
-	$(MAKE) -C $@
-
-clean:	$(addsuffix .clean,$(EXAMPLES))
-
-%.clean:
-	make -C $* clean
+include ../common.mk
