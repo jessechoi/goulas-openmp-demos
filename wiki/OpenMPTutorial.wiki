@@ -169,6 +169,135 @@ Ok, this seems better, we see a speedup of 3.3X at 4 threads. Remember that my p
 
 So, what happened? Threads creation, iterations partitioning and scheduling introduce overheads. When the task is very small, like adding 100 numbers, these overheads dominate the running time. Don't forget Amdhal.
 
+== Tasks ==
+
+The tasks example is similar to parallel for. The difference is that c vector contains a+b, while d vector contains a-b. The addition is to be performed by one thread, while the subtraction to be performed by another. It should be noted that this is a bad example for tasks, presented only for demonstration.
+
+The tasks actually define threads of execution. They must exist within an omp parallel region. A single region defines a step that needs to be performed only by the root thread. Tasks can define shared and private variables as in the parallel for example.
+
+Let's run the example using a variable number of threads.
+
+*Threads: 1*
+{{{
+$ export OMP_NUM_THREADS=1
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 12.459671 msec
+Parallel run time: 14.227681 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+}}}
+
+*Threads: 2*
+
+{{{
+$ export OMP_NUM_THREADS=2
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 12.480135 msec
+Parallel run time: 7.439402 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+}}}
+
+*Threads: 4*
+
+{{{
+$ export OMP_NUM_THREADS=4
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 12.563873 msec
+Parallel run time: 7.793634 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+}}}
+
+*Threads: 8*
+{{{
+$ export OMP_NUM_THREADS=8
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 12.667728 msec
+Parallel run time: 7.871645 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+}}}
+
+The expected behavior is observed here. The optimal result is observed for two threads, the single thread alternative suffers a little overhead and the 4 and 8 thread alternatives suffer a negligent overhead.
+
+It should be noted again that tasks introduce more overhead than parallel for loops.
+
+=== Exercise: Compiler optimization options ===
+
+Now, let's enable some GCC optimization flags - what I actually do was to select what seemed relevant from a big list, without profiling or anything.
+
+Compile using:
+{{{
+make CFLAGS+='-O3 -falign-arrays -fexpensive-optimizations -funroll-loops \
+	-fmove-loop-invariants -fprefetch-loop-arrays -ftree-loop-optimize \
+	-ftree-vect-loop-version -ftree-vectorize'
+}}}
+
+Let's see the same results:
+{{{
+$ export OMP_NUM_THREADS=1
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 3.942910 msec
+Parallel run time: 4.579994 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+$
+$ export OMP_NUM_THREADS=2
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 3.669765 msec
+Parallel run time: 2.358651 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+$
+$ export OMP_NUM_THREADS=4
+$ ./tasks
+
+Parallel tasks
+
+Size 1000000
+Serial run time: 3.545170 msec
+Parallel run time: 2.317864 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+$
+$ export OMP_NUM_THREADS=8
+$ ./tasks
+Parallel tasks
+
+Size 1000000
+Serial run time: 3.661454 msec
+Parallel run time: 2.407260 msec
+Comparing results for c: SUCCESS
+Comparing results for d: SUCCESS
+}}}
+
+This shows the impressive gains from modern compiler optimization. 
+
 = References =
 
 For more tutorials, see the following online content.
