@@ -298,6 +298,33 @@ Comparing results for d: SUCCESS
 
 This shows the impressive gains from modern compiler optimization. 
 
+== Issues not covered here ==
+
+This section covers introductory issues that were not covered in this tutorial.
+
+{{{
+#pragma omp critical
+}}}
+Defines a critical region
+
+{{{
+#pragma omp barrier
+}}}
+Defines a barrier, a point in code that needs to be reached by all active threads before continuing further.
+
+{{{
+#pragma omp atomic
+     statement
+}}}
+Defines an atomic operation. The region it defines can only contain a statement of the form `x++`, `++x`, `x--`, `--x` or a statement of `x binop=E, where binop is one of +,-,*,/,&,^,|,<<,>>.
+
+Another OpenMP construct that provides synchronization is the locking mechanism.  
+
+{{{
+#pragma omp parallel for reduction (op : list)
+}}}
+Unlike the above constructs, this is not a synchronization construct, but it involves synchronization. It performs a reduction operation `op` to the `list` of reduction variables. Reduction and prefix operations are very interesting parallel algorithmic techniques.
+
 = References =
 
 For more tutorials, see the following online content.
