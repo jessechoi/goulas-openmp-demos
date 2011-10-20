@@ -296,7 +296,7 @@ Comparing results for c: SUCCESS
 Comparing results for d: SUCCESS
 }}}
 
-This shows the impressive gains from modern compiler optimization. 
+This shows the impressive gains from modern compiler optimization. With all these enabled, the speedup using OpenMP remains about 1.5X for two threads enabled.
 
 == Issues not covered here ==
 
