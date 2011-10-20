@@ -316,7 +316,7 @@ Defines a barrier, a point in code that needs to be reached by all active thread
 #pragma omp atomic
      statement
 }}}
-Defines an atomic operation. The region it defines can only contain a statement of the form `x++`, `++x`, `x--`, `--x` or a statement of `x binop=E, where binop is one of +,-,*,/,&,^,|,<<,>>.
+Defines an atomic operation. The region it defines can only contain a statement of the form `x++`, `++x`, `x--`, `--x` or a statement of `x binop=E`, where binop is one of `+,-,*,/,&,^,|,<<,>>`.
 
 Another OpenMP construct that provides synchronization is the locking mechanism.  
 
