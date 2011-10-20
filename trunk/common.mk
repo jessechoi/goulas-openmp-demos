@@ -19,8 +19,8 @@
 #  along with goulas-openmp-demos.  
 #  If not, see <http://www.gnu.org/licenses/>.
 CC	:= gcc
-CFLAGS	+= -fopenmp -std=c99 -Wall
-LDFLAGS	+= -fopenmp
+override CFLAGS	+= -fopenmp -std=c99 -Wall
+override LDFLAGS	+= -fopenmp
 
 .PHONY: all clean
 
