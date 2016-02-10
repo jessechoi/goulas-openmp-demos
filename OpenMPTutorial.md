@@ -1,0 +1,1 @@
+The tutorial is available from [this blog post](http://goulassoup.wordpress.com/2011/10/28/openmp-tutorial).
